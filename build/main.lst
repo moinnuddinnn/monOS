@@ -1,0 +1,37 @@
+     1                                  org 0x7C00
+     2                                  bits 16
+     3                                  
+     4                                  main:
+     5                                      ; Set up video mode (text mode 80x25)
+     6 00000000 B80300                      mov ax, 0x0003
+     7 00000003 CD10                        int 0x10
+     8                                  
+     9                                      ; Set up segment registers
+    10 00000005 B8C007                      mov ax, 0x07C0
+    11 00000008 8ED8                        mov ds, ax
+    12 0000000A 8EC0                        mov es, ax
+    13                                  
+    14                                      ; Print a message
+    15 0000000C BE[2100]                    mov si, msg
+    16 0000000F E80100                      call print_string
+    17                                  
+    18                                      ; Halt the system
+    19 00000012 F4                          hlt
+    20                                  
+    21                                  print_string:
+    22 00000013 AC                          lodsb                   ; Load byte from SI into AL
+    23 00000014 08C0                        or al, al               ; Check if zero (end of string)
+    24 00000016 7408                        jz .done
+    25 00000018 B40E                        mov ah, 0x0E            ; BIOS teletype function
+    26 0000001A B700                        mov bh, 0               ; Page number
+    27 0000001C CD10                        int 0x10                ; Call BIOS video service
+    28 0000001E EBF3                        jmp print_string
+    29                                  .done:
+    30 00000020 C3                          ret
+    31                                  
+    32 00000021 48656C6C6F2C204F53-     msg db 'Hello, OS World!', 0
+    32 0000002A 20576F726C642100   
+    33                                  
+    34                                  ; Boot sector padding and signature
+    35 00000032 00<rep 1CCh>            times 510 - ($ - $$) db 0
+    36 000001FE 55AA                    dw 0xAA55

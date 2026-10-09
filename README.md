@@ -4,7 +4,6 @@ A sample OS
   2. Kernel
   3. Terminal/Shell
   4. Filesystem(working)
-
 Acessing the OS:
 1. clone the repo and open it
 2. run 'make'
